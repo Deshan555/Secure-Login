@@ -65,7 +65,7 @@ if(isset($_POST['submit']) && $_SERVER['REQUEST_METHOD'] == 'POST')
     {
         require_once 'config.php';
 
-        $pass = $hashPass;
+        $pass = md5($hashPass);
                 
         $SQL = "INSERT INTO users (pwd, First_Name, Last_Name, Email) VALUES ('$pass', '$firstName', '$lastName', '$mail');";
     
