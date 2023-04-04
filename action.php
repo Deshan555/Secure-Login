@@ -1,20 +1,16 @@
 <?php
 
-if(isset($_POST['submit'])) {
+if(isset($_POST['submit']) && $_SERVER['REQUEST_METHOD'] == 'POST') 
+{
+    $password = $_POST['psw'];
 
-    $password = $_POST['password'];
+    $first_name = $_POST['fname'];
 
-    $phone_number = $_POST['phone_num'];
+    $last_name = $_POST['lname'];
 
-    $first_name = $_POST['firstname'];
+    $email = $_POST['email'];
 
-    $last_name = $_POST['lastname'];
-
-    $gender = $_POST['sex'];
-
-    $email = $_POST['mail'];
-
-    if (strcmp($password, $_POST['password-re']) == 0)
+    if (strcmp($password, $_POST['psw-repeat']) == 0)
     {
         echo 'Password Matched';
 
@@ -25,11 +21,11 @@ if(isset($_POST['submit'])) {
         else{
 
             // encryption password
-            $password = md5($_POST['password']);
+            $password = $_POST['psw'];
 
-            if((mobile_numberValidation($phone_number) AND (mail_Validation($email) AND string_Validation($first_name) AND string_Validation($last_name))) == 1)
+            if(((mail_Validation($email) AND string_Validation($first_name) AND string_Validation($last_name))) == 1)
             {
-                file_write($first_name, $last_name, $phone_number, $gender, $email, $password);
+                db_write($first_name, $last_name, $email, $password);
 
                 header("location: index.php?message=Register Successful, Data Store in Server");
             }
@@ -63,17 +59,26 @@ if(isset($_POST['submit'])) {
         }
     }
 
-    // that function write data on the text file
+    // that function write on database
 
-    function file_write($firstName, $lastName, $mobile, $sex, $mail, $password): void
+    function db_write($firstName, $lastName, $mail, $hashPass): void
     {
-        $file = fopen("register.txt", "a") or die("Unable to open file!");
+        require_once 'config.php';
 
-        $data = "First Name : $firstName\nLast Name : $lastName\nEmail : $mail\nMobile Number : $mobile\nSex : $sex\nPassword : $password\n\n";
-
-        fwrite($file, $data);
-
-        fclose($file);
+        $pass = $hashPass;
+                
+        $SQL = "INSERT INTO users (pwd, First_Name, Last_Name, Email) VALUES ('$pass', '$firstName', '$lastName', '$mail');";
+    
+        if ($conn->query($SQL) === TRUE)
+        {
+            header("location: index.php?message=Register Successful, Data Store in Server");
+        }
+        else
+        {
+            header("location: index.php?error_message=Error Occurred, Data Can't Be Store in Server (Database Error)");
+        }
+        
+        $conn->close();
     }
 
     // that function validation strings
