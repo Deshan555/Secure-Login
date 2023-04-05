@@ -35,7 +35,11 @@ if(!isset($_SESSION['id']))
     <a href="#"><i class="fa fa-facebook"></i></a> 
   </div>
   
-  <p><button>Contact</button></p>
+  <p>
+    <form>
+        <button type="submit" formaction="logout.php">Log Out</button>
+    </form>
+   </p>
 
 </div>
 
